@@ -13,9 +13,13 @@
         <p><strong>Tedarikçi:</strong> {{ product.supplier }}</p>
         <p><strong>Fiyat (KDV Dahil):</strong> {{ product.price_without_vat }} ₺</p>
 
-        {% if product.old_price_without_vat %}
-        <p class="old-price">Eski Fiyat: {{ product.old_price_without_vat }} ₺</p>
+        {% set old_product_list = products_old | selectattr("product_code", "equalto", product.product_code) | list %}
+        {% if old_product_list and old_product_list[0].price_without_vat != product.price_without_vat %}
+        <p class="old-price">Eski Fiyat: {{ old_product_list[0].price_without_vat }} ₺</p>
         {% endif %}
+
+
+       
 
         {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
         <div class="alt-suppliers">

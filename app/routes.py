@@ -15,6 +15,11 @@ def index():
     supplier_filter = request.args.get("supplier")
     products = []
     suppliers = set()
+    products_old = []
+
+    if Path("products_old.json").exists():
+        with open("products_old.json", "r", encoding="utf-8") as f:
+            products_old = json.load(f)
 
     if request.method == 'POST':
         url = request.form.get('url')
@@ -61,4 +66,4 @@ def index():
             else:
                 products = all_products
 
-    return render_template('index.html', products=products, suppliers=sorted(suppliers))
+    return render_template('index.html', products=products, suppliers=sorted(suppliers), products_old=products_old)

@@ -5,7 +5,7 @@ class ProductParser:
     def __init__(self, fetcher):
         self.fetcher = fetcher
 
-    def get_all_product_links(self, start_url, max_pages=10):
+    def get_all_product_links(self, start_url, max_pages=30):
         links = []
         visited_pages = set()
 
