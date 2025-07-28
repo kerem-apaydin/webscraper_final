@@ -1,13 +1,14 @@
 body {
   overflow-x: hidden;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-  margin: auto;
-  margin-right: 260px; /* Sidebar için alan bırak */
+  margin-right: 260px; /* Sağ sidebar alanı */
   padding: 20px;
-  width: calc(100% - 260px); /* Sağ sidebar kadar daralt */
+  width: calc(100% - 260px);
   box-sizing: border-box;
 }
 
@@ -40,11 +41,17 @@ body {
 
 .product-card {
   width: 240px;
+  height: 450px;
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 8px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
   background-color: #fafafa;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
 .product-card img {
@@ -54,18 +61,46 @@ body {
   margin-bottom: 10px;
 }
 
+.product-card h3 {
+  font-size: 16px;
+  margin: 5px 0;
+  flex-shrink: 0;
+}
+
+.product-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
 .old-price {
   color: red;
   text-decoration: line-through;
+  margin-top: auto; /* en aşağı iter */
+  margin-bottom: 45px; /* detay butonuyla araya mesafe koyar */
+}
+
+.product-card a {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #007bff;
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
 }
 
 .alt-suppliers {
   margin-top: 10px;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .alt-suppliers summary {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .alt-suppliers ul {
@@ -76,7 +111,6 @@ body {
 .alt-suppliers li {
   margin-bottom: 6px;
 }
-
 
 .sidebar {
   position: fixed;
@@ -89,9 +123,11 @@ body {
   height: calc(100% - 60px);
   z-index: 1000;
 }
+
 .sidebar h3 {
   margin-top: 0;
 }
+
 .sidebar .btn {
   display: block;
   margin-bottom: 10px;
@@ -104,6 +140,7 @@ body {
   cursor: pointer;
   text-align: center;
 }
+
 .sidebar .btn:hover {
   background-color: #0056b3;
 }

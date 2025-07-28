@@ -23,7 +23,6 @@ class ProductParser:
             try:
                 soup = self.fetcher.get_soup(page_url)
 
-              
                 if page == 1:
                     pagination = soup.select("ul.pagination li a")
                     sayfa_sayilari = [
@@ -51,64 +50,22 @@ class ProductParser:
             return None
         return float(price_text.replace(".", "").replace(",", ".").split(" ")[0])
 
-    def parse_product_detail(self, url):
-        soup = self.fetcher.get_soup(url)
-        box = soup.select_one("#single-product")
-
-        def safe_sel(selector):
-            el = box.select_one(selector)
-            return el.get_text(strip=True) if el else None
-
-        image = box.select_one("div.gallery-holder img")
-        image_url = urljoin(self.fetcher.base_url, image["src"]) if image else None
-
-        price_with_vat = self.normalize_price(safe_sel(".price-current"))
-        price_without_vat = self.normalize_price(safe_sel(".price-prev"))
-
-        product_data = {
-            "title": safe_sel("div.title span"),
-            "supplier": safe_sel(".availability a"),
-            "price_with_vat": price_with_vat,
-            "price_without_vat": price_without_vat,
-            "image": image_url,
-            "product_code": safe_sel("label:contains('DMO Ürün Kodu:') + span"),
-            "url": url
-        }
-
-        alternatifler = []
-        diger_tedarikciler = soup.select("section#digerTedarikcilerTab li.list-group-item")
-
-        for item in diger_tedarikciler:
-            name_el = item.select_one("span")
-            price_el = item.select_one("b")
-            link_el = item.select_one("a[href]")
-
-            name = name_el.get_text(strip=True) if name_el else None
-            price_text = price_el.get_text(strip=True) if price_el else None
-            price = self.normalize_price(price_text)
-            link = urljoin(self.fetcher.base_url, link_el["href"]) if link_el else None
-
-            if name and price and link:
-                alternatifler.append({
-                    "supplier": name,
-                    "price_with_vat": price,
-                    "url": link
-                })
-
-        if alternatifler:
-            product_data["alternatif_tedarikciler"] = alternatifler
-
-        return product_data
+    def extract_vat_rate(self, soup):
+        label = soup.select_one("label:-soup-contains('Vergi(KDV) Oranı:')")
+        if label:
+            match = re.search(r"(\d+)\s?%", label.text)
+            if match:
+                return int(match.group(1)) / 100.0
+        return None
 
     def parse_product_detail_and_alternatives(self, url):
         visited = set()
         all_products = []
 
-        def parse_one(link):
+        def parse_one(link, override_supplier=None, override_price=None):
             if link in visited:
                 return
             visited.add(link)
-            print(f"İşleniyor: {link}")
 
             soup = self.fetcher.get_soup(link)
             box = soup.select_one("#single-product")
@@ -123,24 +80,49 @@ class ProductParser:
             price_with_vat = self.normalize_price(safe_sel(".price-current"))
             price_without_vat = self.normalize_price(safe_sel(".price-prev"))
 
-            product_data = {
-                "title": safe_sel("div.title span"),
-                "supplier": safe_sel(".availability a"),
-                "price_with_vat": price_with_vat,
-                "price_without_vat": price_without_vat,
-                "image": image_url,
-                "product_code": safe_sel("label:contains('DMO Ürün Kodu:') + span"),
-                "url": link
-            }
+            vat_rate = self.extract_vat_rate(soup)
 
-            all_products.append(product_data)
+            if price_with_vat is None and price_without_vat and vat_rate:
+                price_with_vat = round(price_without_vat * (1 + vat_rate), 2)
+            elif price_without_vat is None and price_with_vat and vat_rate:
+                price_without_vat = round(price_with_vat / (1 + vat_rate), 2)
+
+            product_code = safe_sel("label:-soup-contains('DMO Ürün Kodu:') + span")
+            title = safe_sel("div.title span")
+            supplier = safe_sel(".availability a")
+
+            if override_supplier:
+                supplier = override_supplier
+            if override_price:
+                price_with_vat = override_price
+                if vat_rate:
+                    price_without_vat = round(override_price / (1 + vat_rate), 2)
+
+            if supplier and not supplier.lower().startswith("tedarikçi listesi"):
+                product_data = {
+                    "title": title,
+                    "supplier": supplier,
+                    "price_with_vat": price_with_vat,
+                    "price_without_vat": price_without_vat,
+                    "image": image_url,
+                    "product_code": product_code,
+                    "url": link
+                }
+                all_products.append(product_data)
 
             diger_tedarikciler = soup.select("section#digerTedarikcilerTab li.list-group-item")
             for item in diger_tedarikciler:
-                alt_link_el = item.select_one("a[href]")
-                alt_link = urljoin(self.fetcher.base_url, alt_link_el["href"]) if alt_link_el else None
-                if alt_link:
-                    parse_one(alt_link)
+                name_el = item.select_one("span")
+                price_el = item.select_one("b")
+                link_el = item.select_one("a[href]")
+
+                name = name_el.get_text(strip=True) if name_el else None
+                price_text = price_el.get_text(strip=True) if price_el else None
+                alt_link = urljoin(self.fetcher.base_url, link_el["href"]) if link_el else None
+                alt_price = self.normalize_price(price_text)
+
+                if name and alt_link and not name.lower().startswith("tedarikçi listesi"):
+                    parse_one(alt_link, override_supplier=name, override_price=alt_price)
 
         parse_one(url)
         return all_products
