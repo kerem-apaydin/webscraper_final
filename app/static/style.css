@@ -1,0 +1,51 @@
+.container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.product-card {
+    width: 240px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    background-color: #fafafa;
+}
+
+.product-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.old-price {
+    color: red;
+    text-decoration: line-through;
+}
+
+.alt-suppliers {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.alt-suppliers summary {
+    font-weight: bold;
+}
+
+.alt-suppliers ul {
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+.alt-suppliers li {
+    margin-bottom: 6px;
+}

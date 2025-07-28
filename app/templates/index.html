@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <img src="{{ product.image }}" alt="Resim">
+        <h3>{{ product.title }}</h3>
+        <p><strong>Tedarikçi:</strong> {{ product.supplier }}</p>
+        <p><strong>Fiyat (KDV Dahil):</strong> {{ product.price_with_vat }} ₺</p>
+
+        {% if product.old_price_with_vat %}
+        <p class="old-price">Eski Fiyat: {{ product.old_price_with_vat }} ₺</p>
+        {% endif %}
+
+        <a href="{{ product.url }}" target="_blank">Detay</a>
+    </div>
+    {% endfor %}
+    {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
+    <div class="alt-suppliers">
+        <details>
+            <summary style="cursor:pointer;">Alternatif Tedarikçiler ({{ product.alternatif_tedarikciler|length }})</summary>
+            <ul>
+            {% for alt in product.alternatif_tedarikciler %}
+                <li>
+                    {{ alt.supplier }} – {{ alt.price_with_vat }} ₺
+                    <a href="{{ alt.url }}" target="_blank">Görüntüle</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </details>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
