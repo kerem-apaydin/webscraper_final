@@ -5,6 +5,39 @@ class ProductParser:
     def __init__(self, fetcher):
         self.fetcher = fetcher
 
+    def get_all_product_links(self, start_url):
+        """Return a list of product detail URLs from all pages starting at
+        ``start_url``.
+
+        This helper walks pagination links to gather every product link.  It
+        looks for anchors that contain ``/Katalog/Urun/Detay/`` in their href
+        and follows ``rel="next"`` or common next page selectors if present.
+        """
+
+        links = []
+        page_url = start_url
+        visited_pages = set()
+
+        while page_url and page_url not in visited_pages:
+            visited_pages.add(page_url)
+            soup = self.fetcher.get_soup(page_url)
+
+            for a in soup.select('a[href*="/Katalog/Urun/Detay/"]'):
+                href = a.get('href')
+                if not href:
+                    continue
+                full = urljoin(self.fetcher.base_url, href)
+                if full not in links:
+                    links.append(full)
+
+            next_link = soup.select_one('a[rel="next"], li.next a, li.pag-next a')
+            if next_link and next_link.get('href'):
+                page_url = urljoin(self.fetcher.base_url, next_link['href'])
+            else:
+                break
+
+        return links
+
     def normalize_price(self, price_text):
         if not price_text:
             return None

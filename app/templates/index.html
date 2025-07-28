@@ -12,24 +12,25 @@
         <p class="old-price">Eski Fiyat: {{ product.old_price_with_vat }} ₺</p>
         {% endif %}
 
+        {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
+        <div class="alt-suppliers">
+            <details>
+                <summary style="cursor:pointer;">Alternatif Tedarikçiler ({{ product.alternatif_tedarikciler|length }})</summary>
+                <ul>
+                {% for alt in product.alternatif_tedarikciler %}
+                    <li>
+                        {{ alt.supplier }} – {{ alt.price_with_vat }} ₺
+                        <a href="{{ alt.url }}" target="_blank">Görüntüle</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </details>
+        </div>
+        {% endif %}
+
         <a href="{{ product.url }}" target="_blank">Detay</a>
     </div>
     {% endfor %}
-    {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
-    <div class="alt-suppliers">
-        <details>
-            <summary style="cursor:pointer;">Alternatif Tedarikçiler ({{ product.alternatif_tedarikciler|length }})</summary>
-            <ul>
-            {% for alt in product.alternatif_tedarikciler %}
-                <li>
-                    {{ alt.supplier }} – {{ alt.price_with_vat }} ₺
-                    <a href="{{ alt.url }}" target="_blank">Görüntüle</a>
-                </li>
-            {% endfor %}
-            </ul>
-        </details>
-    </div>
-    {% endif %}
 
 </div>
 {% endblock %}
