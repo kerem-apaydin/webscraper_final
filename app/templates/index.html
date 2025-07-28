@@ -5,21 +5,25 @@
     <button type="submit">Verileri Getir</button>
 </form>
 
+<form method="GET" action="/" class="url-form" style="margin-top:10px;">
+    <input type="search" name="q" placeholder="Ürün ara..." value="{{ request.args.get('q', '') }}">
+    <button type="submit">Ara</button>
+</form>
+
+
+
 <div class="product-grid">
     {% for product in products %}
     <div class="product-card">
         <img src="{{ product.image }}" alt="Resim">
         <h3>{{ product.title }}</h3>
         <p><strong>Tedarikçi:</strong> {{ product.supplier }}</p>
-        <p><strong>Fiyat (KDV Dahil):</strong> {{ product.price_without_vat }} ₺</p>
+        <p class = "price"><strong>Fiyat (KDV Dahil):</strong> {{ '%.2f'|format(product.price_without_vat) }} ₺</p>
 
         {% set old_product_list = products_old | selectattr("product_code", "equalto", product.product_code) | list %}
         {% if old_product_list and old_product_list[0].price_without_vat != product.price_without_vat %}
-        <p class="old-price">Eski Fiyat: {{ old_product_list[0].price_without_vat }} ₺</p>
+        <p class="old-price">Eski Fiyat: {{ '%.2f'|format(old_product_list[0].price_without_vat) }} ₺</p>
         {% endif %}
-
-
-       
 
         {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
         <div class="alt-suppliers">
@@ -28,7 +32,7 @@
                 <ul>
                 {% for alt in product.alternatif_tedarikciler %}
                     <li>
-                        {{ alt.supplier }} – {{ alt.price_with_vat }} ₺
+                        {{ alt.supplier }} – {{ '%.2f'|format(alt.price_without_vat) }} ₺
                         <a href="{{ alt.url }}" target="_blank">Görüntüle</a>
                     </li>
                 {% endfor %}

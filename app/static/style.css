@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-  margin-right: 260px; /* Sağ sidebar alanı */
+  margin-right: 260px;
   padding: 20px;
   width: calc(100% - 260px);
   box-sizing: border-box;
@@ -16,12 +16,20 @@ body {
   margin-bottom: 20px;
   display: flex;
   gap: 10px;
-  max-width: 100%;
+  flex-wrap: wrap;
 }
 
-.url-form input {
-  flex: 1;
+.url-form input[type="search"],
+.url-form input[type="text"] {
+  flex: 1 1 200px;
   padding: 8px;
+  font-size: 14px;
+}
+
+.url-form select {
+  width: 150px;
+  padding: 8px;
+  font-size: 14px;
 }
 
 .url-form button {
@@ -31,6 +39,7 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .product-grid {
@@ -41,17 +50,18 @@ body {
 
 .product-card {
   width: 240px;
-  height: 450px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fafafa;
-  position: relative;
+  height: 480px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .product-card img {
@@ -62,40 +72,43 @@ body {
 }
 
 .product-card h3 {
+  text-align: absolute;
   font-size: 16px;
   margin: 5px 0;
-  flex-shrink: 0;
+  height: 100px;
+  overflow: hidden;
 }
 
 .product-card p {
+  text-align: absolute;
   font-size: 14px;
-  margin: 5px 0;
+  margin: 4px 0;
+  height: 60px;
 }
 
+
+
 .old-price {
+  text-align: absolute;
   color: red;
   text-decoration: line-through;
-  margin-top: auto; /* en aşağı iter */
-  margin-bottom: 45px; /* detay butonuyla araya mesafe koyar */
+ 
 }
 
 .product-card a {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
   text-align: center;
   text-decoration: none;
   background-color: #007bff;
   color: white;
   padding: 8px;
   border-radius: 5px;
+  margin-top: auto;
+  display: block;
 }
 
 .alt-suppliers {
   margin-top: 10px;
   font-size: 14px;
-  flex-shrink: 0;
 }
 
 .alt-suppliers summary {
@@ -142,5 +155,8 @@ body {
 }
 
 .sidebar .btn:hover {
+  background-color: #0056b3;
+}
+.button .btn:hover {
   background-color: #0056b3;
 }

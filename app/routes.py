@@ -56,14 +56,35 @@ def index():
     if data_path.exists():
         with open(data_path, "r", encoding="utf-8") as f:
             all_products = json.load(f)
+
+            q = request.args.get("q", "").strip().lower()
+            sort_by = request.args.get("sort")
+            filter_type = request.args.get("filter")
+            supplier_filter = request.args.get("supplier")
+
+            if q:
+                all_products = [
+                    p for p in all_products
+                    if q in p.get("title", "").lower()
+                    or q in p.get("supplier", "").lower()
+                    or q in p.get("product_code", "").lower()
+                ]
+
+            if sort_by == "price_asc":
+                all_products.sort(key=lambda x: x.get("price_with_vat") or 0)
+            elif sort_by == "price_desc":
+                all_products.sort(key=lambda x: x.get("price_with_vat") or 0, reverse=True)
+
             for p in all_products:
                 if p.get("supplier"):
                     suppliers.add(p["supplier"])
+
             if filter_type == "suppliers":
                 products = [p for p in all_products if p.get("supplier")]
             elif supplier_filter:
                 products = [p for p in all_products if p.get("supplier") == supplier_filter]
             else:
                 products = all_products
+
 
     return render_template('index.html', products=products, suppliers=sorted(suppliers), products_old=products_old)
