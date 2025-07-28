@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
+<form method="POST" action="/" class="url-form">
+    <input type="text" name="url" placeholder="DMO ürün sayfası linki girin" required>
+    <button type="submit">Verileri Getir</button>
+</form>
+
 <div class="product-grid">
     {% for product in products %}
     <div class="product-card">
         <img src="{{ product.image }}" alt="Resim">
         <h3>{{ product.title }}</h3>
         <p><strong>Tedarikçi:</strong> {{ product.supplier }}</p>
-        <p><strong>Fiyat (KDV Dahil):</strong> {{ product.price_with_vat }} ₺</p>
+        <p><strong>Fiyat (KDV Dahil):</strong> {{ product.price_without_vat }} ₺</p>
 
-        {% if product.old_price_with_vat %}
-        <p class="old-price">Eski Fiyat: {{ product.old_price_with_vat }} ₺</p>
+        {% if product.old_price_without_vat %}
+        <p class="old-price">Eski Fiyat: {{ product.old_price_without_vat }} ₺</p>
         {% endif %}
 
         {% if product.alternatif_tedarikciler and product.alternatif_tedarikciler|length > 0 %}
@@ -31,6 +36,5 @@
         <a href="{{ product.url }}" target="_blank">Detay</a>
     </div>
     {% endfor %}
-
 </div>
 {% endblock %}

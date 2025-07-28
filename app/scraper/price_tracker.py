@@ -8,7 +8,7 @@ class PriceTracker:
     def normalize_code(self, code):
         if not code:
             return None
-        return re.sub(r"\s+", "", code.strip())  # boşluk, \r, \n temizlenir
+        return re.sub(r"\s+", "", code.strip())
 
     def get_old_product(self, product_code):
         code_norm = self.normalize_code(product_code)
@@ -24,7 +24,6 @@ class PriceTracker:
         except FileNotFoundError:
             return []
 
-
     def track_changes(self, new_products):
         for product in new_products:
             old = self.get_old_product(product.get("product_code"))
@@ -35,6 +34,15 @@ class PriceTracker:
                     product["old_price_without_vat"] = old.get("price_without_vat")
         return new_products
 
-    def save_current_as_old(self, new_products):
+    def save_current_as_old(self, source_file="products.json"):
+        try:
+            with open(source_file, 'r', encoding='utf-8') as f:
+                all_products = json.load(f)
+        except Exception as e:
+            print(f"[save_current_as_old] Ürünler okunamadı: {e}")
+            all_products = []
+
         with open(self.old_file, 'w', encoding='utf-8') as f:
-            json.dump(new_products, f, ensure_ascii=False, indent=4)
+            json.dump(all_products, f, ensure_ascii=False, indent=4)
+
+        print(f"{len(all_products)} ürün yedek olarak kaydedildi: {self.old_file}")

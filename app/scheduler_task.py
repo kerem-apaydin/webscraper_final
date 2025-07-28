@@ -1,31 +1,40 @@
+import json
 from .scraper.fetcher import PageFetcher
 from .scraper.parser import ProductParser
 from .scraper.saver import ProductSaver
 from .scraper.price_tracker import PriceTracker
 
 def auto_scrape():
-    print("\U0001F553 Otomatik scraping başlatıldı...")
+    print("Rutin tarama yapılıyor...")
 
-    url = "https://www.dmo.gov.tr/Arama?k=%7C%7CElektronik%7C%7CSunucular+Ve+Yedekleme+%C3%9Cniteleri&p=1"
     base_url = "https://www.dmo.gov.tr"
-
     fetcher = PageFetcher(base_url)
     parser = ProductParser(fetcher)
     tracker = PriceTracker()
     saver = ProductSaver()
 
     try:
-        links = parser.get_all_product_links(url)
-        products = []
+        with open("products.json", "r", encoding="utf-8") as f:
+            old_products = json.load(f)
 
-        for link in links:
-            product = parser.parse_product_detail(link)
+        visited = set()
+        all_products = []
 
-            products.append(product)
+        for product in old_products:
+            url = product.get("url")
+            if url and url not in visited:
+                visited.add(url)
+                try:
+                    new_items = parser.parse_product_detail_and_alternatives(url)
+                    all_products.extend(new_items)
+                except Exception as e:
+                    print(f"Hata ({url}): {e}")
 
-        products = tracker.track_changes(products)
-        saver.save(products)
-        tracker.save_current_as_old(products)
-        print("\u2705 Otomatik scraping tamamlandı.")
+        all_products = tracker.track_changes(all_products)
+        saver.save(all_products)
+        tracker.save_current_as_old()  
+
+        print(f"Tarama tamamlandı. {len(all_products)} ürün işlendi.")
+
     except Exception as e:
-        print(f"\u274C Hata: {e}")
+        print(f"Genel hata: {e}")

@@ -2,13 +2,32 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <title>DMO Ürün Takibi</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
     <div class="container">
-        <h1>Otomatik Ürün Takibi</h1>
+        <h1>Ürün Takibi</h1>
         {% block content %}{% endblock %}
+    </div>
+
+    <div class="sidebar">
+        <h3>Filtreler</h3>
+        <form method="GET" action="/">
+            <button type="submit" name="filter" value="all" class="btn">Tüm Ürünler</button>
+        </form>
+
+        <h4 style="margin-top: 20px;">Tedarikçiler</h4>
+        <form method="GET" action="/">
+            {% for supplier in suppliers %}
+                <button type="submit" name="supplier" value="{{ supplier }}" class="btn">{{ supplier }}</button>
+            {% endfor %}
+        </form>
     </div>
 </body>
 </html>

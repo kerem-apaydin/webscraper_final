@@ -1,51 +1,109 @@
+body {
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
+
 .container {
-    width: 90%;
-    margin: auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  margin: auto;
+  margin-right: 260px; /* Sidebar için alan bırak */
+  padding: 20px;
+  width: calc(100% - 260px); /* Sağ sidebar kadar daralt */
+  box-sizing: border-box;
+}
+
+.url-form {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.url-form input {
+  flex: 1;
+  padding: 8px;
+}
+
+.url-form button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .product-card {
-    width: 240px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-    background-color: #fafafa;
+  width: 240px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  background-color: #fafafa;
 }
 
 .product-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: contain;
-    margin-bottom: 10px;
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
 .old-price {
-    color: red;
-    text-decoration: line-through;
+  color: red;
+  text-decoration: line-through;
 }
 
 .alt-suppliers {
-    margin-top: 10px;
-    font-size: 14px;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 .alt-suppliers summary {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .alt-suppliers ul {
-    margin-top: 5px;
-    padding-left: 15px;
+  margin-top: 5px;
+  padding-left: 15px;
 }
 
 .alt-suppliers li {
-    margin-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+
+.sidebar {
+  position: fixed;
+  right: 0;
+  top: 60px;
+  width: 200px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-left: 1px solid #ccc;
+  height: calc(100% - 60px);
+  z-index: 1000;
+}
+.sidebar h3 {
+  margin-top: 0;
+}
+.sidebar .btn {
+  display: block;
+  margin-bottom: 10px;
+  padding: 8px;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+.sidebar .btn:hover {
+  background-color: #0056b3;
 }

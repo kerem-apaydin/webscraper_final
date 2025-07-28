@@ -1,39 +1,47 @@
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlencode, urlparse, parse_qs
 import re
 
 class ProductParser:
     def __init__(self, fetcher):
         self.fetcher = fetcher
 
-    def get_all_product_links(self, start_url):
-        """Return a list of product detail URLs from all pages starting at
-        ``start_url``.
-
-        This helper walks pagination links to gather every product link.  It
-        looks for anchors that contain ``/Katalog/Urun/Detay/`` in their href
-        and follows ``rel="next"`` or common next page selectors if present.
-        """
-
+    def get_all_product_links(self, start_url, max_pages=10):
         links = []
-        page_url = start_url
         visited_pages = set()
 
-        while page_url and page_url not in visited_pages:
+        for page in range(1, max_pages + 1):
+            url_parts = urlparse(start_url)
+            query = parse_qs(url_parts.query)
+            query["p"] = [str(page)]
+            new_query = urlencode(query, doseq=True)
+            page_url = f"{url_parts.scheme}://{url_parts.netloc}{url_parts.path}?{new_query}"
+
+            if page_url in visited_pages:
+                break
             visited_pages.add(page_url)
-            soup = self.fetcher.get_soup(page_url)
 
-            for a in soup.select('a[href*="/Katalog/Urun/Detay/"]'):
-                href = a.get('href')
-                if not href:
-                    continue
-                full = urljoin(self.fetcher.base_url, href)
-                if full not in links:
-                    links.append(full)
+            try:
+                soup = self.fetcher.get_soup(page_url)
 
-            next_link = soup.select_one('a[rel="next"], li.next a, li.pag-next a')
-            if next_link and next_link.get('href'):
-                page_url = urljoin(self.fetcher.base_url, next_link['href'])
-            else:
+              
+                if page == 1:
+                    pagination = soup.select("ul.pagination li a")
+                    sayfa_sayilari = [
+                        int(a.get_text(strip=True))
+                        for a in pagination
+                        if a.get_text(strip=True).isdigit()
+                    ]
+                    if sayfa_sayilari:
+                        max_pages = max(sayfa_sayilari)
+
+                for a in soup.select('a[href*="/Katalog/Urun/Detay/"]'):
+                    href = a.get('href')
+                    if href:
+                        full = urljoin(self.fetcher.base_url, href)
+                        if full not in links:
+                            links.append(full)
+            except Exception as e:
+                print(f"Hata ({page_url}): {e}")
                 break
 
         return links
@@ -67,7 +75,6 @@ class ProductParser:
             "url": url
         }
 
-        # Alternatif tedarikçileri al
         alternatifler = []
         diger_tedarikciler = soup.select("section#digerTedarikcilerTab li.list-group-item")
 
@@ -92,11 +99,8 @@ class ProductParser:
             product_data["alternatif_tedarikciler"] = alternatifler
 
         return product_data
-    
+
     def parse_product_detail_and_alternatives(self, url):
-        """
-        Ana ürün + varsa alternatif tedarikçili tüm ürünleri döner (zincirleme)
-        """
         visited = set()
         all_products = []
 
@@ -131,7 +135,6 @@ class ProductParser:
 
             all_products.append(product_data)
 
-            # zincirleme: alternatif tedarikçilere gir
             diger_tedarikciler = soup.select("section#digerTedarikcilerTab li.list-group-item")
             for item in diger_tedarikciler:
                 alt_link_el = item.select_one("a[href]")
