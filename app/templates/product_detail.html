@@ -1,0 +1,35 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <img src="{{ product.image }}" alt="Ürün Resmi" class="product-image"><br><br>
+
+    <h2>{{ product.title }}</h2>
+    <p><strong>Ürün Kodu:</strong> {{ product.product_code }}</p>
+    <p><strong>Tedarikçi:</strong> {{ product.supplier }}</p>
+    <p><strong>Vergisiz Fiyat:</strong> {{ '%.2f'|format(product.raw_price) }} ₺</p>
+    <p><strong>KDV Dahil Fiyat:</strong> {{ '%.2f'|format(product.price_v) }} ₺</p>
+
+    <h3>Fiyat Geçmişi</h3>
+    {% if price_logs %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>KDV Dahil Fiyat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in price_logs|reverse %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ '%.2f'|format(entry.price_v) }} ₺</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Fiyat geçmişi bulunamadı.</p>
+    {% endif %}
+</div>
+{% endblock %}

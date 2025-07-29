@@ -10,7 +10,17 @@ body {
   padding: 20px;
   width: calc(100% - 260px);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
+
+.product-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px; 
+}
+
 
 .url-form {
   margin-bottom: 20px;
@@ -50,7 +60,7 @@ body {
 
 .product-card {
   width: 240px;
-  height: 480px;
+  height: 430px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -58,10 +68,8 @@ body {
   border-radius: 8px;
   background-color: #fafafa;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  padding: 15px;
+
 }
 
 .product-card img {
@@ -73,27 +81,21 @@ body {
 
 .product-card h3 {
   text-align: absolute;
-  font-size: 16px;
+  font-size: 15px;
   margin: 5px 0;
   height: 100px;
   overflow: hidden;
 }
 
 .product-card p {
-  text-align: absolute;
-  font-size: 14px;
-  margin: 4px 0;
+  text-align: auto;
+  font-size: 13px;
+  margin: 5px 0;
   height: 60px;
 }
 
 
 
-.old-price {
-  text-align: absolute;
-  color: red;
-  text-decoration: line-through;
- 
-}
 
 .product-card a {
   text-align: center;
@@ -128,17 +130,19 @@ body {
 .sidebar {
   position: fixed;
   right: 0;
-  top: 60px;
+  top: 0px;
   width: 200px;
   padding: 20px;
   background-color: #f4f4f4;
   border-left: 1px solid #ccc;
-  height: calc(100% - 60px);
+  height: 100%;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .sidebar h3 {
   margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .sidebar .btn {
@@ -152,11 +156,41 @@ body {
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
+ 
 }
+
+
 
 .sidebar .btn:hover {
   background-color: #0056b3;
 }
 .button .btn:hover {
   background-color: #0056b3;
+}
+
+
+
+.price-up {
+  padding-bottom: 10px;
+  color: red;
+  font-weight: italic;
+}
+
+.price-down {
+  padding-bottom: 10px;
+  color: green;
+  font-weight: italic;
+}
+
+.price-neutral {
+  padding-bottom: 10px;
+  color: #444;
+  font-style: italic;
+}
+
+.container img,
+.product-image {
+  max-width: 25%;
+  height: auto;
+  object-fit: contain;
 }

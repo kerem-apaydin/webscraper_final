@@ -20,6 +20,12 @@
             <button type="submit" name="filter" value="all" class="btn">Tüm Ürünler</button>
         </form>
 
+        <form method="GET" action="/" style="margin-top: 10px;">
+        <input type="hidden" name="filter" value="price_drop">
+        <button type="submit" class="btn">Fiyatı Düşenler</button>
+        </form>
+
+
         <h4 style="margin-top: 20px;">Tedarikçiler</h4>
         <form method="GET" action="/">
             {% for supplier in suppliers %}
