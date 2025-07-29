@@ -188,9 +188,4 @@ body {
   font-style: italic;
 }
 
-.container img,
-.product-image {
-  max-width: 25%;
-  height: auto;
-  object-fit: contain;
-}
+

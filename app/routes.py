@@ -15,7 +15,7 @@ def index():
     supplier_filter = request.args.get('supplier')
     products = []
     suppliers = []
-
+    
     if request.method == 'POST':
         url = request.form.get('url')
         if url:
